@@ -8,7 +8,9 @@ from . import views
 
 app_name = 'api'
 
-# router = routers.DefaultRouter()
+router = routers.DefaultRouter()
+
+router.register('scope', views.ScopeViewSet, basename='scope')
 
 
 urlpatterns = [
@@ -17,4 +19,5 @@ urlpatterns = [
     path('user/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
     path('request_content/', views.RequestContentView.as_view(), name='request_content'),
     path('request_content/<int:pk>/', views.RequestContentDetail.as_view(), name='request_content_detail'),
+    path('', include(router.urls)),
 ]

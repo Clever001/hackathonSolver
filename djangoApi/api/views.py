@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from django.db import transaction
-from rest_framework import views, status
+from rest_framework import views, status, viewsets
 from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 from .models import *
-from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner, RequestDetailPermission
-from .serializers import UserSerializer, UserCreateSerializer, RequestContentSerializer
+from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner, RequestDetailPermission, ScopePermission
+from .serializers import UserSerializer, UserCreateSerializer, RequestContentSerializer, ScopeSerializer
 
 
 class UserListView(views.APIView):
@@ -105,5 +105,15 @@ class RequestContentDetail(views.APIView):
         self.check_object_permissions(request, req)
         req.delete()
         return Response({'message': 'ok'}, status=200)
+
+
+class ScopeViewSet(viewsets.ModelViewSet):
+    """Реализация работы с сферами работы"""
+    queryset = Scope.objects.all()
+    serializer_class = ScopeSerializer
+    permission_classes = (ScopePermission,)
+
+
+
 
 

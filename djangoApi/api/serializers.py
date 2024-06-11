@@ -39,3 +39,9 @@ class RequestContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = '__all__'
+
+
+class ScopeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scope
+        fields = '__all__'
