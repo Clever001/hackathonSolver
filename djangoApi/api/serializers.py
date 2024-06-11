@@ -31,3 +31,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
             last_name=validated_data.get('last_name', '')
         )
         return user
+
+
+class RequestContentSerializer(serializers.ModelSerializer):
+    # author = UserSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Request
+        fields = '__all__'

@@ -21,11 +21,14 @@ class Request(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор запроса',
+        related_name='user',
     )
     scope = models.ForeignKey(
         'Scope',
-        on_delete=models.CASCADE,  # SetNull
+        on_delete=models.SET_NULL,  # SetNull
         verbose_name='Сфера вопроса',
+        null=True,
+        blank=True,
     )
     content = models.CharField(
         max_length=MAX_LENGTH_TEXT_FIELD,

@@ -7,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 from .models import *
-from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner
-from .serializers import UserSerializer, UserCreateSerializer
+from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner, RequestDetailPermission
+from .serializers import UserSerializer, UserCreateSerializer, RequestContentSerializer
 
 
 class UserListView(views.APIView):
@@ -61,4 +61,49 @@ class UserDetailView(views.APIView):
         token.delete()
         user.delete()
         return Response({'message': 'ok'}, status=200)
+
+
+class RequestContentView(views.APIView):
+    """Реализация сохранения и просмотра текста запросов"""
+
+    permission_classes = (IsSuperuserOrOwner,)
+
+    def get(self, request):
+        if request.user.is_superuser:
+            requests = Request.objects.all()
+        else:
+            requests = Request.objects.filter(author=request.user)
+        requests_serializers = RequestContentSerializer(requests, many=True)
+        return Response(requests_serializers.data)
+
+    @transaction.atomic
+    def post(self, request):
+        data = request.data.copy()
+        data['author'] = request.user.id
+        request_serializer = RequestContentSerializer(data=data)
+        if request_serializer.is_valid():
+            request_serializer.save()
+            return Response(request_serializer.data, status=201)
+        return Response(request_serializer.errors, status=400)
+
+
+class RequestContentDetail(views.APIView):
+    """Реализация просмотра и удаления конкретного запроса"""
+
+    permission_classes = (RequestDetailPermission,)
+
+    def get(self, request, pk):
+        req = get_object_or_404(Request, pk=pk)
+        # return Response({"author": req.author.id, "user": request.user.id})
+        self.check_object_permissions(request, req)
+        serializer = RequestContentSerializer(req, many=False)
+        return Response(serializer.data)
+
+    @transaction.atomic
+    def delete(self, request, pk):
+        req = get_object_or_404(Request, pk=pk)
+        self.check_object_permissions(request, req)
+        req.delete()
+        return Response({'message': 'ok'}, status=200)
+
 
