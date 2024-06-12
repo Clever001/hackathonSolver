@@ -1,3 +1,11 @@
+"""
+Пока что данный файл находится в проекте в ненужном месте.
+Предполагалось, что данная папка будет в корневом каталоге,
+но python ваш хваленый не хочет ее находить. Поэтому файл пока что здесь
+пока я не разберусь с данной проблемой.
+"""
+
+
 def tokenize(content: str) -> list[str]:
     """
     Пример работы токенизатора. Backend будет использовать данную функцию,
@@ -10,8 +18,25 @@ def tokenize(content: str) -> list[str]:
     return list(content.split(' '))
 
 
+def classify(tokenized_str: list[str]) -> int:
+    """
+    Здесь должен работать ваш классификатор.
+    Back будет использовать данную функцию для получения id предпологаемой сферы сферы вопросов.
+    :param tokenized_str: Токенизированная строка.
+    :return: Айдишник возможной сферы вопроса.
+    """
+    result = 0
+    for token in tokenized_str:
+        for char in token:
+            result += ord(char)
+    return (result % 2) + 1
+
+
 if __name__ == '__main__':
     data = tokenize("У меня сломался роутер. Не знаю что делать.")
     for word in data:
         print(word, end='/')
     print()
+
+    scope_id = classify(data)
+    print(f"Айди сферы вопросов в базе данных: {scope_id}.")

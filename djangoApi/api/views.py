@@ -4,9 +4,10 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .models import *
-from .neural.connect import tokenize
-from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner, RequestDetailPermission, ScopePermission
-from .serializers import UserSerializer, UserCreateSerializer, RequestContentSerializer, ScopeSerializer
+from .neural.connect import tokenize, classify
+from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner, RequestDetailPermission, SafeOrSuperuserPermission
+from .serializers import UserSerializer, UserCreateSerializer, RequestContentSerializer, ScopeSerializer, \
+    DocAnswerSerializer
 
 
 class UserListView(views.APIView):
@@ -109,7 +110,7 @@ class ScopeViewSet(viewsets.ModelViewSet):
     """Реализация работы с сферами вопросов"""
     queryset = Scope.objects.all()
     serializer_class = ScopeSerializer
-    permission_classes = (ScopePermission,)
+    permission_classes = (SafeOrSuperuserPermission,)
 
 
 class TokenizationView(views.APIView):
@@ -124,12 +125,43 @@ class TokenizationView(views.APIView):
         content = req.content
         tokens = tokenize(content)
         for token in tokens:
-            word, created = Word.objects.get_or_create(word=token)
-            word.requests.add(req)
+            word = Word.objects.create(word=token, request=req)
             word.save()
         words = [word.word for word in req.words.all()]
         return Response(words, status=201)
 
 
+class ClassificationView(views.APIView):
+    """Реализация классификации"""
+
+    permission_classes = (RequestDetailPermission,)
+
+    @transaction.atomic
+    def post(self, request, pk):
+        req = get_object_or_404(Request, pk=pk)
+        self.check_object_permissions(request, req)
+        if not req.words.exists():
+            return Response({'message': 'Request is not tokenized'}, status=400)
+        words = [word.word for word in req.words.all()]
+        scope_id = classify(words)
+        req.scope = get_object_or_404(Scope, pk=scope_id)
+        req.save()
+        req_serializer = RequestContentSerializer(req, many=False)
+        return Response(req_serializer.data, status=201)
 
 
+class DocAnswerViewSet(viewsets.ModelViewSet):
+    """Реализация работы с ответами из документации"""
+    queryset = DocAnswer.objects.all()
+    serializer_class = DocAnswerSerializer
+    permission_classes = (SafeOrSuperuserPermission,)
+
+
+class AnswersView(views.APIView):
+    """Реализация получения ответов из заданной области"""
+
+    def get(self, request, scope_id):
+        scope = get_object_or_404(Scope, pk=scope_id)
+        doc_answers = DocAnswer.objects.filter(scope=scope)
+        serializer = DocAnswerSerializer(doc_answers, many=True)
+        return Response(serializer.data)

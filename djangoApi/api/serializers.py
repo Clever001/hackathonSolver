@@ -33,15 +33,24 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
+class ScopeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scope
+        fields = '__all__'
+
+
 class RequestContentSerializer(serializers.ModelSerializer):
     # author = UserSerializer(many=False, read_only=True)
+    # scope = ScopeSerializer(many=False, read_only=True)
 
     class Meta:
         model = Request
         fields = '__all__'
 
 
-class ScopeSerializer(serializers.ModelSerializer):
+class DocAnswerSerializer(serializers.ModelSerializer):
+    # scope = ScopeSerializer(many=False, read_only=True)
+
     class Meta:
-        model = Scope
+        model = DocAnswer
         fields = '__all__'

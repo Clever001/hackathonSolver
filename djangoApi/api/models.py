@@ -50,12 +50,12 @@ class Request(models.Model):
 class Word(models.Model):
     word = models.CharField(
         max_length=200,
-        unique=True,
         verbose_name='Слово',
     )
-    requests = models.ManyToManyField(
+    request = models.ForeignKey(
         Request,
-        verbose_name='Запросы',
+        on_delete=models.CASCADE,
+        verbose_name='Запрос',
     )
 
     class Meta:
