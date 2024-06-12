@@ -19,5 +19,6 @@ urlpatterns = [
     path('user/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
     path('request_content/', views.RequestContentView.as_view(), name='request_content'),
     path('request_content/<int:pk>/', views.RequestContentDetail.as_view(), name='request_content_detail'),
+    path('tokenize/<int:pk>/', views.TokenizationView.as_view(), name='tokenize'),
     path('', include(router.urls)),
 ]

@@ -1,12 +1,10 @@
-from django.shortcuts import render
 from django.db import transaction
-from rest_framework import views, status, viewsets
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework import views, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 
 from .models import *
+from .neural.connect import tokenize
 from .permissions import IsSuperuserOrPost, IsSuperuserOrOwner, RequestDetailPermission, ScopePermission
 from .serializers import UserSerializer, UserCreateSerializer, RequestContentSerializer, ScopeSerializer
 
@@ -108,11 +106,29 @@ class RequestContentDetail(views.APIView):
 
 
 class ScopeViewSet(viewsets.ModelViewSet):
-    """Реализация работы с сферами работы"""
+    """Реализация работы с сферами вопросов"""
     queryset = Scope.objects.all()
     serializer_class = ScopeSerializer
     permission_classes = (ScopePermission,)
 
+
+class TokenizationView(views.APIView):
+    """Реализация токенизации"""
+
+    permission_classes = (RequestDetailPermission,)
+
+    @transaction.atomic
+    def post(self, request, pk):
+        req = get_object_or_404(Request, pk=pk)
+        self.check_object_permissions(request, req)
+        content = req.content
+        tokens = tokenize(content)
+        for token in tokens:
+            word, created = Word.objects.get_or_create(word=token)
+            word.requests.add(req)
+            word.save()
+        words = [word.word for word in req.words.all()]
+        return Response(words, status=201)
 
 
 
