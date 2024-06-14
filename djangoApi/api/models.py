@@ -12,31 +12,33 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-MAX_LENGTH_TEXT_FIELD = 5000
+# Размеры берутся с запасом.
+MAX_LENGTH_MESSAGE_FIELD = 5000
+MAX_LENGTH_TITLE_FIELD = 500
 User = get_user_model()
 
 
 class Request(models.Model):
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Автор запроса',
-        related_name='user',
-    )
-    scope = models.ForeignKey(
-        'Scope',
-        on_delete=models.SET_NULL,  # SetNull
-        verbose_name='Сфера вопроса',
-        null=True,
-        blank=True,
-    )
+    # author = models.ForeignKey(
+    #     User,
+    #     on_delete=models.CASCADE,
+    #     verbose_name='Автор запроса',
+    #     # related_name='user',
+    # )
     content = models.CharField(
-        max_length=MAX_LENGTH_TEXT_FIELD,
+        max_length=MAX_LENGTH_MESSAGE_FIELD,
         verbose_name='Текст запроса',
     )
     created = models.DateTimeField(
         auto_now_add=True,
-        verbose_name='Время и дата получения запроса',
+        verbose_name='Время и дата создания запроса',
+    )
+    answer = models.ForeignKey(
+        'Answer',
+        on_delete=models.CASCADE,
+        verbose_name='Документация',
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -49,9 +51,11 @@ class Request(models.Model):
 
 class Word(models.Model):
     word = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_TITLE_FIELD,
         verbose_name='Слово',
     )
+    # В терминах нейронной модели тут содержится токен,
+    # но в логике джанго токен обозначает другую сущность.
     request = models.ForeignKey(
         Request,
         on_delete=models.CASCADE,
@@ -66,49 +70,70 @@ class Word(models.Model):
         default_related_name = 'words'
 
 
-class DocAnswer(models.Model):
-    question = models.CharField(
-        max_length=MAX_LENGTH_TEXT_FIELD,
-        verbose_name='Типовой вопрос',
+class Answer(models.Model):
+    content = models.CharField(
+        max_length=MAX_LENGTH_MESSAGE_FIELD,
+        verbose_name='Ответы из документации',
+        unique=True,  # !!!
     )
-    answer = models.CharField(
-        max_length=MAX_LENGTH_TEXT_FIELD,
-        verbose_name='Ответ',
-    )
-    scope = models.ForeignKey(
-        'Scope',
-        on_delete=models.CASCADE,
-        verbose_name='Сфера вопроса',
-    )
+
+    def __str__(self):
+        return self.content
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['question', 'answer'],
-                name='unique_question_answer',
-            ),
-            models.UniqueConstraint(
-                fields=['question', 'answer', 'scope'],
-                name='unique_question_answer_scope',
-            ),
-        ]
-        ordering = ('answer',)
-        verbose_name = 'Типовой вопрос с примером'
-        verbose_name_plural = 'Типовые вопросы с примерами'
-
-        default_related_name = 'docAnswers'
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'
 
 
-class Scope(models.Model):
+class File(models.Model):
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_TITLE_FIELD,
+        verbose_name='Название файла',
         unique=True,
-        verbose_name='Название сферы вопросов',
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Файл'
+        verbose_name_plural = 'Файлы'
+
+
+class Title(models.Model):
+    name = models.CharField(
+        max_length=MAX_LENGTH_TITLE_FIELD,
+        verbose_name='Название заголовка',
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Заголовок'
+        verbose_name_plural = 'Заголовки'
+
+
+class Doc(models.Model):
+    file = models.ForeignKey(
+        File,
+        on_delete=models.CASCADE,
+        verbose_name='Название файла'
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name='Название заголовка',
+    )
+    answer = models.ForeignKey(
+        Answer,
+        on_delete=models.CASCADE,
+        verbose_name='Ответ из документации',
     )
 
     class Meta:
-        ordering = ('name',)
-        verbose_name = 'Сфера вопросов'
-        verbose_name_plural = 'Cферы вопросов'
+        verbose_name = 'Документация'
+        verbose_name_plural = 'Документация'
 
-        default_related_name = 'scope'
+        default_related_name = 'doc'

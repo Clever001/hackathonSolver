@@ -18,18 +18,24 @@ def tokenize(content: str) -> list[str]:
     return list(content.split(' '))
 
 
-def classify(tokenized_str: list[str]) -> int:
+def classify(tokenized_str: list[str]) -> (str, str):
     """
     Здесь должен работать ваш классификатор.
-    Back будет использовать данную функцию для получения id предпологаемой сферы сферы вопросов.
+    Back будет использовать данную функцию.
     :param tokenized_str: Токенизированная строка.
-    :return: Айдишник возможной сферы вопроса.
+    :return: Первый str - название файла, второй - заголовок.
     """
-    result = 0
-    for token in tokenized_str:
-        for char in token:
-            result += ord(char)
-    return (result % 2) + 1
+    return 'HelloWorld.txt', 'Relaxing'
+
+
+def transformer(answers: list[str]) -> str:
+    """
+
+    :param answers: Предполагаемые ответы.
+    :return: Самый релевантный ответ.
+    """
+
+    return answers[2]
 
 
 if __name__ == '__main__':

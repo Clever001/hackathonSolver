@@ -33,24 +33,53 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
-class ScopeSerializer(serializers.ModelSerializer):
+class DocSerializer(serializers.ModelSerializer):
+    file = serializers.CharField()
+    title = serializers.CharField()
+    answer = serializers.CharField()
+
     class Meta:
-        model = Scope
-        fields = '__all__'
+        model = Doc
+        fields = ('file', 'title', 'answer',)
+
+    def create(self, validated_data):
+        file_name = validated_data.pop('file')
+        title_name = validated_data.pop('title')
+        answer_content = validated_data.pop('answer')
+
+        file, created = File.objects.get_or_create(name=file_name)
+        title, created = Title.objects.get_or_create(name=title_name)
+        answer, created = Answer.objects.get_or_create(content=answer_content)
+
+        doc = Doc.objects.create(file=file, title=title, answer=answer, **validated_data)
+        return doc
 
 
-class RequestContentSerializer(serializers.ModelSerializer):
-    # author = UserSerializer(many=False, read_only=True)
-    # scope = ScopeSerializer(many=False, read_only=True)
+class RequestSerializer(serializers.ModelSerializer):
+    answer = serializers.CharField()
 
     class Meta:
         model = Request
-        fields = '__all__'
+        fields = ('content', 'created', 'answer',)
 
-
-class DocAnswerSerializer(serializers.ModelSerializer):
-    # scope = ScopeSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = DocAnswer
-        fields = '__all__'
+# class ScopeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Scope
+#         fields = '__all__'
+#
+#
+# class RequestContentSerializer(serializers.ModelSerializer):
+#     # author = UserSerializer(many=False, read_only=True)
+#     # scope = ScopeSerializer(many=False, read_only=True)
+#
+#     class Meta:
+#         model = Request
+#         fields = '__all__'
+#
+#
+# class DocAnswerSerializer(serializers.ModelSerializer):
+#     # scope = ScopeSerializer(many=False, read_only=True)
+#
+#     class Meta:
+#         model = DocAnswer
+#         fields = '__all__'
