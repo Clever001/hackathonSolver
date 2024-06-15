@@ -19,7 +19,7 @@ def Classify(embedding: np.ndarray, docs: pd.DataFrame, query: str) -> str:
 
 
 def Transform(query: str) -> str:
-    return "My short favorite answer."
+    pass
 
 
 def get_file_paths(directory, extension=".xlsx"):

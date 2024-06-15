@@ -5,6 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .models import *
+from .neural.classifier import classify, query_search
 from .neural.transform import Bert
 from .neural.connect import Classify, Embed
 from .permissions import *
@@ -71,13 +72,13 @@ class AnswerView(views.APIView):
 
         if not Embedding.objects.exists():
             emb = Embedding.objects.create()
-            emb.set_array(Embed(docs))
+            emb.set_array(classify(docs))
             emb.save()
 
         emb = Embedding.objects.first()
         embedding_data = emb.get_array()
 
-        answer = Bert(Classify(embedding_data, docs, message))
+        answer = Bert(query_search(embedding=embedding_data, df=docs, query=message))
 
         ans_obj = Answer.objects.create(content=answer)
 
