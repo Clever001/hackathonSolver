@@ -51,5 +51,5 @@ def init_doc(directory):
 
 
 if __name__ == '__main__':
-    directory = r'D:\download\dataset\Система технической поддержки\xlsx'
+    directory = r'C:\Users\cakev\PycharmProjects\hackathonSolver\xlsx'
     init_doc(directory)

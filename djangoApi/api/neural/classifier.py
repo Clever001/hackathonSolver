@@ -49,7 +49,7 @@ def query_search(query: str, embedding: ndarray, df: pd.DataFrame) -> str:
     answer = df['content'].iloc[idist_arr_sorted[0]]
 
     print(1)
-    return df.iloc[idist_arr_sorted[:10], :]
+    return df["content"].iloc[idist_arr_sorted[0]]
 
 
 def get_file_paths(directory, extension=".xlsx"):
