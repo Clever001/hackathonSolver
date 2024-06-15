@@ -17,7 +17,8 @@ git : https://www.git-scm.com/downloads
 python: https://www.python.org/downloads/
 ```
 
-Склонируйте репозиторий и создайте виртуальное окружение .venv.
+Откройте папку, в которой будет лежать склонированный репозиторий. 
+Склонируйте репозиторий и создайте виртуальное окружение .venv при помощи следующих консольных команд.
 
 ```
 git clone https://github.com/Clever001/hackathonSolver.git
@@ -45,7 +46,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 ### Выполните миграции
 
-Откройте терминал, перейдите в каталог проекта. После перейдите в каталог djangoApi
+Перейдите в каталог djangoApi.
 
 ```
 cd djangoApi
@@ -63,13 +64,21 @@ python manage.py migrate
 
 ### Запуск сервера
 
-Зайдите в консоль и перейдите в каталог djangoApi.
-Запустите сервер при помощи следующей команды.
+Запустите сервер при помощи следующей команды. Дождитесь запуска сервера.
 
 ```
 python manage.py runserver
 ```
 
+Должны вывестись следующие текстовые данные:
+
+"Django version 5.0.6, using settings 'djangoApi.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK."
+
 ### Перейдите в корневой каталог и запустите файл site.py
+
+Нужно запустить site.py. Для этого откройте еще один терминал, не закрывая старый.
+Запустите файл при помощи следующей команды:
 
 На консоль у вас должен вывестись url. Перейдите на него нажав левой кнопкой мыши.
