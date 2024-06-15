@@ -18,30 +18,16 @@ python: https://www.python.org/downloads/
 ```
 
 Откройте папку, в которой будет лежать склонированный репозиторий. 
-Склонируйте репозиторий и создайте виртуальное окружение .venv при помощи следующих консольных команд.
+Склонируйте репозиторий.
 
 ```
 git clone https://github.com/Clever001/hackathonSolver.git
-cd hackathonSolver
-python -m venv .venv
 ```
 
 Откройте папку hackathonSolver в Pycharm. Введите в терминал следующую команду.
 
 ```
 .venv\Scripts\activate
-```
-
-### Установите требуемые пакеты
-
-Для работы проекта требуется установить некоторые пакеты.
-
-```
-pip install django, djangorestframework, djangorestframework-simplejwt
-pip install numpy, pandas, requests, pywebio, transformers
-pip install scikit-learn, sentence-transformers
-pip install asyncio, pywebio, openpyxl
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
 ### Выполните миграции
@@ -76,9 +62,13 @@ python manage.py runserver
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK."
 
-### Перейдите в корневой каталог и запустите файл site.py
+### Запуск site.py
 
 Нужно запустить site.py. Для этого откройте еще один терминал, не закрывая старый.
 Запустите файл при помощи следующей команды:
+
+```
+python site.py
+```
 
 На консоль у вас должен вывестись url. Перейдите на него нажав левой кнопкой мыши.
