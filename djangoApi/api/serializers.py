@@ -61,25 +61,3 @@ class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = ('content', 'created', 'answer',)
-
-# class ScopeSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Scope
-#         fields = '__all__'
-#
-#
-# class RequestContentSerializer(serializers.ModelSerializer):
-#     # author = UserSerializer(many=False, read_only=True)
-#     # scope = ScopeSerializer(many=False, read_only=True)
-#
-#     class Meta:
-#         model = Request
-#         fields = '__all__'
-#
-#
-# class DocAnswerSerializer(serializers.ModelSerializer):
-#     # scope = ScopeSerializer(many=False, read_only=True)
-#
-#     class Meta:
-#         model = DocAnswer
-#         fields = '__all__'

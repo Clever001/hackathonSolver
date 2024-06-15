@@ -28,14 +28,14 @@ def classify(tokenized_str: list[str]) -> (str, str):
     return 'HelloWorld.txt', 'Relaxing'
 
 
-def transformer(answers: list[str]) -> str:
+def transformer(request: str, answers: list[str]) -> str:
     """
 
     :param answers: Предполагаемые ответы.
     :return: Самый релевантный ответ.
     """
 
-    return answers[2]
+    return answers[0]
 
 
 if __name__ == '__main__':

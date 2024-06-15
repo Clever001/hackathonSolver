@@ -68,12 +68,12 @@ Api было полностью перевормулировано с целью
 
 ```
 url: http://127.0.0.1:8000/api/v1/ask_question/
-Methods: GET-method.
+Methods: GET.
 ```
 
 Пример входных данных:
 
-```
+```json
 {
     "message": "Как можно отдохнуть?"
 }
@@ -81,7 +81,7 @@ Methods: GET-method.
 
 Пример выходных данных: (status: 200 OK)
 
-```
+```json
 {
     "answer": "Watch youtube."
 }
@@ -89,10 +89,81 @@ Methods: GET-method.
 
 В случае если запрос был пустой, выводит ошибку: (status: 400 BAD REQUEST)
 
-```
+```json
 {
     "error": "Message cannot be empty."
 }
 ```
 
+### Запрос Docs
 
+Данный запрос служит для инициализации базы данных. 
+Разрешается работать с конкретной записью в бд при помощи индекса pk, но это не обязательно.
+
+```
+url: http://127.0.0.1:8000/api/v1/docs/
+Methods: GET, POST, DELETE.
+```
+
+Вход: (POST)
+
+```json
+{
+    "file": "Какое-то название.pdf",
+    "title": "Какой-то заголовок",
+    "answer": "Какой-то ответ"
+}
+```
+
+Выход: (status: 201 Created)
+
+```json
+{
+    "file": "Какое-то название.pdf",
+    "title": "Какой-то заголовок",
+    "answer": "Какой-то ответ"
+}
+```
+
+### Запрос Request
+
+Можно смотреть запросы пользователей и ответы на них.
+
+```
+url: http://127.0.0.1:8000/api/v1/docs/
+Methods: GET.
+```
+
+Вход пустой
+
+Выход: (status: 200 OK)
+
+```json
+[
+    {
+        "content": "Writing in Python",
+        "created": "2024-06-15T01:07:46.961342+05:00",
+        "answer": "Writing in Python"
+    },
+    {
+        "content": "Здесь что-то написано.",
+        "created": "2024-06-15T01:11:49.769901+05:00",
+        "answer": "Writing in Python"
+    },
+    {
+        "content": "Как можно отдохнуть?",
+        "created": "2024-06-15T01:13:03.475866+05:00",
+        "answer": "Sleep."
+    },
+    {
+        "content": "Как можно отдохнуть?",
+        "created": "2024-06-15T01:30:06.967693+05:00",
+        "answer": "Watch youtube."
+    },
+    {
+        "content": "Как можно отдохнуть?",
+        "created": "2024-06-15T01:39:20.872391+05:00",
+        "answer": "Watch youtube."
+    }
+]
+```
