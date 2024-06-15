@@ -5,7 +5,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .models import *
-from .neural.connect import Classify, Transform, Embed
+from .neural.transform import Bert
+from .neural.connect import Classify, Embed
 from .permissions import *
 from .serializers import *
 
@@ -62,9 +63,11 @@ class AnswerView(views.APIView):
 
         req_obj = Request.objects.create(content=message)
 
-        docs = Doc.objects.values_list('name', 'content')
-        docs = pd.DataFrame(docs, columns=['name', 'content'])
-        docs_df = docs.groupby('name')['content'].apply(list).reset_index()
+        docs = {'name' : [], 'content': []}
+        for doc in Doc.objects.all():
+            docs['name'].append(doc.name)
+            docs['content'].append(doc.content)
+        docs = pd.DataFrame(docs)
 
         if not Embedding.objects.exists():
             emb = Embedding.objects.create()
@@ -74,7 +77,7 @@ class AnswerView(views.APIView):
         emb = Embedding.objects.first()
         embedding_data = emb.get_array()
 
-        answer = Transform(Classify(embedding_data, docs, message))
+        answer = Bert(Classify(embedding_data, docs, message))
 
         ans_obj = Answer.objects.create(content=answer)
 
