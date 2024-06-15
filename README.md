@@ -12,15 +12,22 @@
 
 Склонируйте репозиторий и создайте виртуальное окружение .venv.
 
+```
+git clone https://github.com/Clever001/hackathonSolver.git
+cd hackathonSolver
+python -m venv .venv
+```
+
 ### Установите требуемые пакеты
 
 Для работы проекта требуется установить некоторые пакеты.
 
 ```
 pip install django, djangorestframework, djangorestframework-simplejwt
-pip install numpy, pandas, requests, pywebio, torch, transformers
-pip install scikit-learn, sentence-transformers, torchvision
-pip install torchaudio, asyncio, pywebio, openpyxl
+pip install numpy, pandas, requests, pywebio, transformers
+pip install scikit-learn, sentence-transformers
+pip install asyncio, pywebio, openpyxl
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
 ### Сделайте миграции
