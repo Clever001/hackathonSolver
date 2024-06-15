@@ -50,6 +50,18 @@ def init_doc(directory):
                 print(f'Successfully posted content from file {file_name}')
 
 
+def refresh_embedding():
+    url = 'http://127.0.0.1:8000/api/v1/docs/'
+
+    response = requests.post('http://127.0.0.1:8000/api/v1/refresh_embedding/')
+
+
 if __name__ == '__main__':
-    directory = r'C:\Users\cakev\PycharmProjects\hackathonSolver\xlsx'
-    init_doc(directory)
+    current_file_path = os.path.abspath(__file__)
+    current_dir = os.path.dirname(current_file_path)
+    root_dir = os.path.dirname(current_dir)
+    xlsx_dir = os.path.join(root_dir, 'xlsx')
+
+    init_doc(xlsx_dir)
+
+    refresh_embedding()

@@ -22,6 +22,8 @@ urlpatterns = [
 
     path('ask_question/', views.AnswerView.as_view(), name='ask_question'),
 
+    path('refresh_embedding/', views.RefreshEmbeddingView.as_view(), name='embedding'),
+
     # path('request_content/', views.RequestContentView.as_view(), name='request_content'),
     # path('request_content/<int:pk>/', views.RequestContentDetail.as_view(), name='request_content_detail'),
     # path('tokenize/<int:pk>/', views.TokenizationView.as_view(), name='tokenize'),

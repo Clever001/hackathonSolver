@@ -50,7 +50,7 @@ def Bert(query: str) -> str:
     print("Relevant sentences:")
     for sentence in relevant_sentences:
         ans += sentence
-        ans += '\n'
+        ans += ' '
     # if relevant_sentences == []:
     #     # перевести на статистику
     #     ans += '\n'

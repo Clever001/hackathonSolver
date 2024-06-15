@@ -53,6 +53,15 @@ class UserDetailView(views.APIView):
         return Response({'message': 'ok'}, status=status.HTTP_200_OK)
 
 
+def get_dataframe():
+    docs = {'name': [], 'content': []}
+    for doc in Doc.objects.all():
+        docs['name'].append(doc.name)
+        docs['content'].append(doc.content)
+    docs = pd.DataFrame(docs)
+    return docs
+
+
 class AnswerView(views.APIView):
     """Получение ответа на запрос"""
 
@@ -64,11 +73,7 @@ class AnswerView(views.APIView):
 
         req_obj = Request.objects.create(content=message)
 
-        docs = {'name' : [], 'content': []}
-        for doc in Doc.objects.all():
-            docs['name'].append(doc.name)
-            docs['content'].append(doc.content)
-        docs = pd.DataFrame(docs)
+        docs = get_dataframe()
 
         if not Embedding.objects.exists():
             emb = Embedding.objects.create()
@@ -85,7 +90,26 @@ class AnswerView(views.APIView):
         req_obj.answer = ans_obj
         req_obj.save()
 
+        if len(answer.strip()) == 0:
+            answer = "Извините, но мы не можем ответить на ваш запрос. Вы можете обратиться на линию тех поддержки."
+
         return Response({'answer': answer}, status=status.HTTP_200_OK)
+
+
+class RefreshEmbeddingView(views.APIView):
+
+    @transaction.atomic
+    def post(self, request):
+        if Embedding.objects.exists():
+            emb = Embedding.objects.first()
+            emb.delete()
+
+        docs = get_dataframe()
+
+        emb = Embedding.objects.create()
+        emb.set_array(classify(docs))
+        emb.save()
+        return Response({'message': 'ok'}, status=status.HTTP_201_CREATED)
 
 
 class DocViewSet(viewsets.ModelViewSet):
