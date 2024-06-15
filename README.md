@@ -10,12 +10,25 @@
 
 ### Склонируйте репозиторий себе на локальную машину
 
+Перед установкой скачайте git и python с официальных сайтов, если они не были у вас установлены прежде.
+
+```
+git : https://www.git-scm.com/downloads
+python: https://www.python.org/downloads/
+```
+
 Склонируйте репозиторий и создайте виртуальное окружение .venv.
 
 ```
 git clone https://github.com/Clever001/hackathonSolver.git
 cd hackathonSolver
 python -m venv .venv
+```
+
+Откройте папку hackathonSolver в Pycharm. Введите в терминал следующую команду.
+
+```
+.venv\Scripts\activate
 ```
 
 ### Установите требуемые пакеты
@@ -30,7 +43,7 @@ pip install asyncio, pywebio, openpyxl
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### Сделайте миграции
+### Выполните миграции
 
 Откройте терминал, перейдите в каталог проекта. После перейдите в каталог djangoApi
 
@@ -38,7 +51,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 cd djangoApi
 ```
 
-Дальше вам требуется создать свою базу данных. Для этого необходимо провести миграции при помощи следующих команд:
+Дальше вам требуется создать базу данных. Для этого необходимо провести миграции при помощи следующих команд:
 
 ```
 python manage.py makemigrations
@@ -57,7 +70,6 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-### Проинициализируйте БД
+### Перейдите в корневой каталог и запустите файл site.py
 
-Перед работой требуется проицициализировать в базе данных некоторые данные.
-Для этого перейдите в папку beforeRun и запустите файл Init DataBase.py
+На консоль у вас должен вывестись url. Перейдите на него нажав левой кнопкой мыши.

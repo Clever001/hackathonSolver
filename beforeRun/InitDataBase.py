@@ -65,3 +65,5 @@ if __name__ == '__main__':
     init_doc(xlsx_dir)
 
     refresh_embedding()
+
+    print("----------init end----------")
