@@ -5,44 +5,21 @@
 пока я не разберусь с данной проблемой.
 """
 
-
-def tokenize(content: str) -> list[str]:
-    """
-    Пример работы токенизатора. Backend будет использовать данную функцию,
-    чтобы получать слова из текста запроса пользователя.
-    Пишите все что хотите, но бэк будет взаимодействовать только с этой функцией.
-
-    :param content: Текст запроса.
-    :return: Токенизированная строка.
-    """
-    return list(content.split(' '))
+import numpy as np
+import pandas as pd
 
 
-def classify(tokenized_str: list[str]) -> (str, str):
-    """
-    Здесь должен работать ваш классификатор.
-    Back будет использовать данную функцию.
-    :param tokenized_str: Токенизированная строка.
-    :return: Первый str - название файла, второй - заголовок.
-    """
-    return 'HelloWorld.txt', 'Relaxing'
+def Embed(texts: pd.DataFrame) -> np.ndarray:
+    return np.array([[1, 2, 3], [4, 5, 6]])
 
 
-def transformer(request: str, answers: list[str]) -> str:
-    """
+def Classify(embedding: np.ndarray, docs: pd.DataFrame, query: str) -> str:
+    return "My very large favorite answer."
 
-    :param answers: Предполагаемые ответы.
-    :return: Самый релевантный ответ.
-    """
 
-    return answers[0]
+def Transform(query: str) -> str:
+    return "My short favorite answer."
 
 
 if __name__ == '__main__':
-    data = tokenize("У меня сломался роутер. Не знаю что делать.")
-    for word in data:
-        print(word, end='/')
-    print()
-
-    scope_id = classify(data)
-    print(f"Айди сферы вопросов в базе данных: {scope_id}.")
+    pass

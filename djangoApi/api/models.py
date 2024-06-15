@@ -5,6 +5,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
+import numpy as np
+import pickle
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -13,18 +16,12 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 # Размеры берутся с запасом.
-MAX_LENGTH_MESSAGE_FIELD = 5000
+MAX_LENGTH_MESSAGE_FIELD = 10000
 MAX_LENGTH_TITLE_FIELD = 500
 User = get_user_model()
 
 
 class Request(models.Model):
-    # author = models.ForeignKey(
-    #     User,
-    #     on_delete=models.CASCADE,
-    #     verbose_name='Автор запроса',
-    #     # related_name='user',
-    # )
     content = models.CharField(
         max_length=MAX_LENGTH_MESSAGE_FIELD,
         verbose_name='Текст запроса',
@@ -49,32 +46,10 @@ class Request(models.Model):
         default_related_name = 'requests'
 
 
-class Word(models.Model):
-    word = models.CharField(
-        max_length=MAX_LENGTH_TITLE_FIELD,
-        verbose_name='Слово',
-    )
-    # В терминах нейронной модели тут содержится токен,
-    # но в логике джанго токен обозначает другую сущность.
-    request = models.ForeignKey(
-        Request,
-        on_delete=models.CASCADE,
-        verbose_name='Запрос',
-    )
-
-    class Meta:
-        ordering = ('word',)
-        verbose_name = 'Слово'
-        verbose_name_plural = 'Слова'
-
-        default_related_name = 'words'
-
-
 class Answer(models.Model):
     content = models.CharField(
         max_length=MAX_LENGTH_MESSAGE_FIELD,
-        verbose_name='Ответы из документации',
-        unique=True,  # !!!
+        verbose_name='Содержание ответа',
     )
 
     def __str__(self):
@@ -85,55 +60,36 @@ class Answer(models.Model):
         verbose_name_plural = 'Ответы'
 
 
-class File(models.Model):
-    name = models.CharField(
-        max_length=MAX_LENGTH_TITLE_FIELD,
-        verbose_name='Название файла',
-        unique=True,
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Файл'
-        verbose_name_plural = 'Файлы'
-
-
-class Title(models.Model):
-    name = models.CharField(
-        max_length=MAX_LENGTH_TITLE_FIELD,
-        verbose_name='Название заголовка',
-        unique=True,
-    )
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Заголовок'
-        verbose_name_plural = 'Заголовки'
-
-
 class Doc(models.Model):
-    file = models.ForeignKey(
-        File,
-        on_delete=models.CASCADE,
-        verbose_name='Название файла'
+    name = models.CharField(
+        max_length=MAX_LENGTH_TITLE_FIELD,
+        verbose_name='Имя файла',
     )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name='Название заголовка',
+    content = models.TextField(
+        verbose_name='Содержание документа'
     )
-    answer = models.ForeignKey(
-        Answer,
-        on_delete=models.CASCADE,
-        verbose_name='Ответ из документации',
-    )
+
+    def __str__(self):
+        return self.name
 
     class Meta:
-        verbose_name = 'Документация'
-        verbose_name_plural = 'Документация'
+        verbose_name = 'Файл документации'
+        verbose_name_plural = 'Файлы документации'
 
-        default_related_name = 'doc'
+
+class Embedding(models.Model):
+    array_data = models.BinaryField(
+        verbose_name='Бинарная информация',
+    )
+
+    def set_array(self, array):
+        self.array_data = pickle.dumps(array)
+
+    def get_array(self):
+        return pickle.loads(self.array_data)
+
+    class Meta:
+        verbose_name = 'Embedding'
+        verbose_name_plural = 'Embedding'
+
+

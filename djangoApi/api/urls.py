@@ -10,7 +10,6 @@ app_name = 'api'
 
 router = routers.DefaultRouter()
 router.register('docs', views.DocViewSet, basename='docs')
-router.register('request', views.RequestViewSet, basename='request')
 
 # router.register('scope', views.ScopeViewSet, basename='scope')
 # router.register('doc_answer', views.DocAnswerViewSet, basename='doc_answer')

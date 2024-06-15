@@ -1,18 +1,17 @@
+import pandas as pd
 from django.db import transaction
 from rest_framework import views, viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .models import *
-from .neural.connect import tokenize, classify, transformer
+from .neural.connect import Classify, Transform, Embed
 from .permissions import *
 from .serializers import *
 
 
 class UserListView(views.APIView):
     """Получение списка пользователей"""
-
-    # permission_classes = (IsSuperuserOrPost,)
 
     def get(self, request):
         users = User.objects.all()
@@ -37,10 +36,6 @@ class UserDetailView(views.APIView):
     permission_classes = (IsSuperuserOrOwner,)
 
     def get(self, request, pk):
-        # try:
-        #     user = User.objects.get(pk=pk)
-        # except User.DoesNotExist:
-        #     raise NotFound(detail="User not found", code=status.HTTP_404_NOT_FOUND)
         user = get_object_or_404(User, pk=pk)
         self.check_object_permissions(request, user)
         serializer = UserSerializer(user, many=False)
@@ -59,49 +54,37 @@ class UserDetailView(views.APIView):
 class AnswerView(views.APIView):
     """Получение ответа на запрос"""
 
-    """
-    С целью упрощения взаимодействия с api и ускорения работы
-    создано одно представление, инициализирующее сущности
-    Request, Word и все остальные.
-    """
-
     @transaction.atomic
     def get(self, request):
         message = request.data.get('message', '')
         if not message:
             return Response({'error': 'Message cannot be empty.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        req = Request.objects.create(content=message)
+        req_obj = Request.objects.create(content=message)
 
-        tokens = tokenize(message)
-        words_to_create = [Word(word=token, request=req) for token in tokens]
-        Word.objects.bulk_create(words_to_create)
+        docs = Doc.objects.values_list('name', 'content')
+        docs = pd.DataFrame(docs, columns=['name', 'content'])
+        docs_df = docs.groupby('name')['content'].apply(list).reset_index()
 
-        words = [word.word for word in req.words.all()]
+        if not Embedding.objects.exists():
+            emb = Embedding.objects.create()
+            emb.set_array(Embed(docs))
+            emb.save()
 
-        file_name, title_name = classify(words)
-        file = get_object_or_404(File, name=file_name)
-        title = get_object_or_404(Title, name=title_name)
+        emb = Embedding.objects.first()
+        embedding_data = emb.get_array()
 
-        # Использование prefetch_related для предварительной загрузки связанных объектов
-        docs = Doc.objects.filter(file=file, title=title).select_related('answer')
-        answers = [doc.answer.content for doc in docs]
-        prefered_answer = transformer(message, answers)
+        answer = Transform(Classify(embedding_data, docs, message))
 
-        answer, created = Answer.objects.get_or_create(content=prefered_answer)
-        req.answer = answer
-        req.save()
+        ans_obj = Answer.objects.create(content=answer)
 
-        return Response({'answer': prefered_answer}, status=status.HTTP_200_OK)
+        req_obj.answer = ans_obj
+        req_obj.save()
+
+        return Response({'answer': answer}, status=status.HTTP_200_OK)
 
 
 class DocViewSet(viewsets.ModelViewSet):
     """Получение доступа к документации"""
     queryset = Doc.objects.all()
     serializer_class = DocSerializer
-
-
-class RequestViewSet(viewsets.ReadOnlyModelViewSet):
-    """Получение достопа к запросам только на чтение"""
-    queryset = Request.objects.all()
-    serializer_class = RequestSerializer

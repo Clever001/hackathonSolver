@@ -34,30 +34,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class DocSerializer(serializers.ModelSerializer):
-    file = serializers.CharField()
-    title = serializers.CharField()
-    answer = serializers.CharField()
 
     class Meta:
         model = Doc
-        fields = ('file', 'title', 'answer',)
-
-    def create(self, validated_data):
-        file_name = validated_data.pop('file')
-        title_name = validated_data.pop('title')
-        answer_content = validated_data.pop('answer')
-
-        file, created = File.objects.get_or_create(name=file_name)
-        title, created = Title.objects.get_or_create(name=title_name)
-        answer, created = Answer.objects.get_or_create(content=answer_content)
-
-        doc = Doc.objects.create(file=file, title=title, answer=answer, **validated_data)
-        return doc
-
-
-class RequestSerializer(serializers.ModelSerializer):
-    answer = serializers.CharField()
-
-    class Meta:
-        model = Request
-        fields = ('content', 'created', 'answer',)
+        fields = '__all__'
