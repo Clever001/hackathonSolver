@@ -16,7 +16,7 @@ async def main():
     put_markdown("## Задавайте свой вопрос!")
 
     msg_box = output()
-    put_scrollable(msg_box, height=300, keep_bottom=True)
+    put_scrollable(msg_box, height=600, keep_bottom=True)
 
     nickname = "Вы"
 
