@@ -17,11 +17,12 @@ git : https://www.git-scm.com/downloads
 python: https://www.python.org/downloads/
 ```
 
-Откройте папку, в которой будет лежать склонированный репозиторий. 
-Склонируйте репозиторий.
+Склонируйте репозиторий и создайте виртуальное окружение .venv.
 
 ```
 git clone https://github.com/Clever001/hackathonSolver.git
+cd hackathonSolver
+python -m venv .venv
 ```
 
 Откройте папку hackathonSolver в Pycharm. Введите в терминал следующую команду.
@@ -30,9 +31,21 @@ git clone https://github.com/Clever001/hackathonSolver.git
 .venv\Scripts\activate
 ```
 
+### Установите требуемые пакеты
+
+Для работы проекта требуется установить некоторые пакеты.
+
+```
+pip install django, djangorestframework, djangorestframework-simplejwt
+pip install numpy, pandas, requests, pywebio, transformers
+pip install scikit-learn, sentence-transformers
+pip install asyncio, pywebio, openpyxl
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
 ### Выполните миграции
 
-Перейдите в каталог djangoApi.
+Откройте терминал, перейдите в каталог проекта. После перейдите в каталог djangoApi.
 
 ```
 cd djangoApi
@@ -50,17 +63,12 @@ python manage.py migrate
 
 ### Запуск сервера
 
-Запустите сервер при помощи следующей команды. Дождитесь запуска сервера.
+Зайдите в консоль и перейдите в каталог djangoApi.
+Запустите сервер при помощи следующей команды.
 
 ```
 python manage.py runserver
 ```
-
-Должны вывестись следующие текстовые данные:
-
-"Django version 5.0.6, using settings 'djangoApi.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CTRL-BREAK."
 
 ### Запуск site.py
 
