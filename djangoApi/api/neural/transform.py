@@ -26,7 +26,7 @@ def Bert(query: str) -> str:
 
 
     # Функция для выделения релевантных предложений
-    def extract_relevant_sentences(text, threshold=0):
+    def extract_relevant_sentences(text, threshold=0.5):
         sentences = text.split('. ')
         relevant_sentences = []
 
